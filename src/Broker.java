@@ -1,30 +1,38 @@
 /**
+ * Broker give a name to a channel, accept or established a connection
  * 
  * @author cl__nguyen
  *
  */
-abstract class Broker {
+public class Broker {
 
 	/**
+	 * This method give a name to a broker
 	 * 
 	 * @param name
 	 */
-	Broker(String name) {
+	public Broker(String name) {
 	}
 
 	/**
+	 * This method accept the connection
 	 * 
 	 * @param port
-	 * @return
+	 * @return the channel
 	 */
-	abstract Channel accept(int port);
+	public Channel accept(int port) {
+		return null;
+	}
 
 	/**
+	 * This method established the connection
 	 * 
 	 * @param name
 	 * @param port
-	 * @return
+	 * @return the channel
 	 */
-	abstract Channel connect(String name, int port);
+	public Channel connect(String name, int port) {
+		return null;
+	}
 
 }
