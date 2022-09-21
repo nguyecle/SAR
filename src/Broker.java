@@ -1,38 +1,35 @@
 /**
- * Broker give a name to a channel, accept or established a connection
+ * Broker established the connection between two task, and creates the channels
  * 
  * @author cl__nguyen
  *
  */
-public class Broker {
+public abstract class Broker {
 
 	/**
 	 * This method give a name to a broker
 	 * 
 	 * @param name
 	 */
-	public Broker(String name) {
+	protected Broker(String name) {
 	}
 
 	/**
-	 * This method accept the connection
+	 * This method accept the connection, accept is a blocking method
 	 * 
-	 * @param port
-	 * @return the channel
+	 * @param port port number of the connection
+	 * @return the channel allowing communication between the two brokers
 	 */
-	public Channel accept(int port) {
-		return null;
-	}
+	abstract Channel accept(int port);
 
 	/**
-	 * This method established the connection
+	 * This method established the connection to another brokers, this method is
+	 * blocking
 	 * 
-	 * @param name
-	 * @param port
+	 * @param name, name of the broker you want to connect with
+	 * @param port, port number of the broker
 	 * @return the channel
 	 */
-	public Channel connect(String name, int port) {
-		return null;
-	}
+	abstract Channel connect(String name, int port);
 
 }
