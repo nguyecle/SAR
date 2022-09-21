@@ -6,12 +6,15 @@
  */
 public abstract class Broker {
 
+	String m_name;
+
 	/**
 	 * This method give a name to a broker
 	 * 
 	 * @param name
 	 */
 	protected Broker(String name) {
+		m_name = name;
 	}
 
 	/**
