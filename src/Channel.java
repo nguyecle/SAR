@@ -18,6 +18,7 @@ public abstract class Channel {
 	 * @param offset : beginning index
 	 * @param length : length of the buffer
 	 * @return int indicating how many bytes have been reading sucessfully
+	 * @throws IOException if channel is disconnected during the method
 	 */
 	public abstract int read(byte[] bytes, int offset, int length);
 
@@ -25,9 +26,10 @@ public abstract class Channel {
 	 * This method allows a task to write a content in a buffer.
 	 * 
 	 * @param bytes  : buffer of byte which will be write
-	 * @param offset : beginning index
+	 * @param offset : beginning indexs
 	 * @param length : length of the buffer
 	 * @return int indicating how many bytes have been writing sucessfully
+	 * @throws IOException if channel is disconnected during the method
 	 */
 	public abstract int write(byte[] bytes, int offset, int length);
 
