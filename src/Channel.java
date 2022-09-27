@@ -1,3 +1,4 @@
+import java.io.IOException;
 
 /**
  * Channel allows tasks to communicate between each other and share data Broker
@@ -7,7 +8,17 @@
  * 
  * 
  */
-public abstract class Channel {
+public class Channel {
+
+	Channel channelConnectedTo;
+	boolean isDisconnected;
+	CircularBuffer c_buffer;
+
+	public Channel() {
+		this.isDisconnected = false;
+		this.c_buffer = new CircularBuffer(5); // 5 bytes
+	}
+
 	/**
 	 * This method allows a task to read the content of a buffer. Exception when
 	 * there is an error. This is a blocking method, when it tries to read when
@@ -20,7 +31,37 @@ public abstract class Channel {
 	 * @return int indicating how many bytes have been reading sucessfully
 	 * @throws IOException if channel is disconnected during the method
 	 */
-	public abstract int read(byte[] bytes, int offset, int length);
+	public int read(byte[] bytes, int offset, int length) throws IOException { // ProdCons from last year
+		if (this.channelConnectedTo.disconnected() || this.isDisconnected) {
+			this.channelConnectedTo.disconnect();
+			this.disconnect();
+			throw new IOException("Channels have been disconnected");
+		}
+
+		int counter = 0;
+
+		while (counter < bytes.length - 1 && counter < length - 1) {
+			try {
+				while (this.c_buffer.empty()) {
+					synchronized (this) {
+						this.wait();
+					}
+				}
+				byte b = c_buffer.get();
+				bytes[offset + counter] = b;
+				counter++;
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return 0;
+			}
+			synchronized (this.channelConnectedTo) {
+				this.channelConnectedTo.notifyAll();
+			}
+		}
+
+		return counter;
+	}
 
 	/**
 	 * This method allows a task to write a content in a buffer.
@@ -31,18 +72,61 @@ public abstract class Channel {
 	 * @return int indicating how many bytes have been writing sucessfully
 	 * @throws IOException if channel is disconnected during the method
 	 */
-	public abstract int write(byte[] bytes, int offset, int length);
+	public int write(byte[] bytes, int offset, int length) throws IOException { // ProdCons from last year
+		if (this.channelConnectedTo.disconnected() || this.isDisconnected) {
+			this.channelConnectedTo.disconnect();
+			this.disconnect();
+			throw new IOException("Channels disconnected");
+		}
+
+		int counter = 0;
+
+		while (counter < length && counter < bytes.length) {
+			try {
+				while (this.channelConnectedTo.c_buffer.full()) {
+
+					synchronized (this) {
+						this.wait();
+					}
+				}
+				if (this.channelConnectedTo.disconnected() || this.isDisconnected) {
+					this.channelConnectedTo.disconnect();
+					this.disconnect();
+					throw new IOException("Channels disconnected");
+				}
+				this.channelConnectedTo.c_buffer.put(bytes[offset + counter]);
+				counter++;
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return 0;
+			}
+			synchronized (this.channelConnectedTo) {
+				this.channelConnectedTo.notifyAll();
+			}
+		}
+
+		return counter;
+	}
 
 	/**
 	 * This method allows a channel to disconnect
 	 */
 
-	public abstract void disconnect();
+	public void disconnect() {
+		this.isDisconnected = true;
+	}
 
 	/**
 	 * This method indicates if the channel is disconnected
 	 * 
 	 * @return
 	 */
-	public abstract boolean disconnected();
+	public boolean disconnected() {
+		return isDisconnected;
+	}
+
+	public void channelConnectedTo(Channel external) {
+		this.channelConnectedTo = external;
+	}
 }

@@ -1,0 +1,9 @@
+On stock les Brokers dans une liste
+
+Acceptation de la connexion :
+- Tableau d'attente : c'est un tableau ou va être stocker les ports en attente d'une connexion
+- Tableau en cours : c'est un tableau ou va être stocker les ports avec une connexion ouverte et le nom du Channel lié
+
+Connexion :
+- 2 Brokers stockés dans une liste qui créent 2 Channels
+- Il y a donc 2 Channels et on connecte les 2
