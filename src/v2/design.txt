@@ -1,0 +1,8 @@
+- Chaque tâche possèdent son propre QueueBroker et son propre MessageQueue. Ainsi, deux MessageQueue forment un canal de communication entre deux taches.
+- Si la connexion est interrompu sur une des deux MessageQueue alors il n'y a plus aucune communication et on lève une exception.
+- Il faut vérifier que le buffer utilisé pour envoyer un message ne soit pas plein.
+- Il faut aussi vérifier si il n'y a rien à lire dans le buffer.
+- Send et Receive sont deux méthodes bloquantes.
+- Send envoie un tableau d'octets.
+- Receive lit l'entête et tant que la taille est différente de la taille spécifiées alors on bloque.
+- On calcule la taille du message automatiquement
