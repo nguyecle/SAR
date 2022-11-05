@@ -4,30 +4,37 @@ public class RDV {
 
 	BrokerImpl accept;
 	BrokerImpl connect;
-	ChannelImpl channelaccept;
+	ChannelImpl channel;
 
 	public RDV(BrokerImpl accept) {
 		this.accept = accept;
 	}
 
+	/*
+	 * This method allows to create a channel and accept for the broker
+	 */
 	public synchronized ChannelImpl accept(int port) throws InterruptedException {
 		while (connect == null) {
 			wait();
 		}
 
-		while (channelaccept == null) {
+		while (channel == null) {
 			wait();
 		}
 
-		return channelaccept;
+		return channel;
 	}
 
+	/*
+	 * Create two channel interconnected
+	 * This is synchronized because we dont want that 2 brokers interact together with connect and accept functions
+	 */
 	public synchronized ChannelImpl connect(int port) throws InterruptedException {
-		this.channelaccept = new ChannelImpl();
+		this.channel = new ChannelImpl();
 		ChannelImpl channelconnect = new ChannelImpl();
 
-		this.channelaccept.connectTo(channelconnect);
-		channelconnect.connectTo(channelaccept);
+		this.channel.connectTo(channelconnect);
+		channelconnect.connectTo(channel);
 
 		notifyAll();
 
@@ -35,6 +42,9 @@ public class RDV {
 
 	}
 
+	/*
+	 * Set another broker to the RDV
+	 */
 	public void setBrokerConnect(BrokerImpl b) {
 		this.connect = b;
 	}

@@ -3,33 +3,27 @@ package v2;
 public class TaskB extends Task {
 
 	Broker broker;
-	QueueBrokerImpl brokerQueue;
-	MessageQueueImpl msgQueue;
-	String m_name;
-	Channel channel;
+	String name2;
 
 	public TaskB(String name, String name2) {
-		broker = new Broker(name);
-		m_name = name2;
-		this.msgQueue = new MessageQueueImpl(channel);
-		this.brokerQueue = new QueueBrokerImpl(name);
+		this.name2 = name2;
+		this.broker = new Broker(name);
 	}
 
 	public void run() {
+		Channel channel;
 		try {
-			msgQueue = (MessageQueueImpl) brokerQueue.connect(m_name, 5555);
-			// channel = broker.connect(m_name, 5555);
+			channel = broker.connect(name2, 5555);
 
-			byte[] tabTest = new byte[64];
-			tabTest = msgQueue.receive();
+			byte[] bytes = new byte[1024];
 
-			// int length = channel.read(tab, 0, 6);
+			int length = channel.read(bytes, 0, 5);
 
-			for (int i = 0; i < tabTest.length; i++) {
-				System.out.print(tabTest[i]);
+			System.out.print("Message received : ");
+			for (int i = 0; i < length; i++) {
+				System.out.print((char) bytes[i]);
 			}
-			// channel.disconnect();
-			msgQueue.close();
+			channel.disconnect();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
